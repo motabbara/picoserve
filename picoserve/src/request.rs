@@ -1,7 +1,7 @@
 //! HTTP request types.
 
 use core::{fmt, ops::Range};
-
+use defmt::info;
 use embedded_io_async::Read;
 
 use super::url_encoded::UrlEncodedString;
@@ -848,10 +848,11 @@ impl<'b, R: Read> Reader<'b, R> {
             .as_str()
             .map_err(|_| ReadError::BadRequestLine)?;
 
+        info!("url_raw = {}", url);
         let (url, fragments) = url.split_once('#').map_or((url, None), |(url, fragments)| {
             (url, Some(UrlEncodedString(fragments)))
         });
-
+        info!("url_s = {}", url);
         let (path, query) = url
             .split_once('?')
             .map_or((Path(UrlEncodedString(url)), None), |(path, query)| {
