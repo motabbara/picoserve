@@ -854,16 +854,15 @@ impl<'b, R: Read> Reader<'b, R> {
         });
         //info!("url_s = {}", url);
         let (path, query) = url
-            .split_once('?')
+            .split_once('?');
             .map_or((Path(UrlEncodedString(url)), None), |(path, query)| {
-                (Path(UrlEncodedString(path)), Some(UrlEncodedString(query)))
-            });
-
-        let query = if let Some(rest) = query.strip_prefix('?') {
+                (Path(UrlEncodedString(path)), Some(UrlEncodedString(if let Some(rest) = query.strip_prefix('?') {
             rest
         } else {
             query
-        };
+        })))
+            });
+
         
         let headers = Headers(&parts_buffer[headers]);
 
